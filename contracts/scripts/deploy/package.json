@@ -1,0 +1,9 @@
+{
+    "dependencies": {
+        "@polkadot/api": "8.11.3",
+        "@polkadot/api-contract": "8.11.3",
+        "@polkadot/util-crypto": "^9.7.2",
+        "dotenv":"^16.0.3"
+    }
+}
+
