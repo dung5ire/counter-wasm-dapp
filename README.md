@@ -8,7 +8,7 @@
 2. Go inside the folder
     ``` 
     cd counter-wasm-dapp
-
+    ```
 # Ink! Smart Contract
 + Go to `contracts` folder:
     ```
