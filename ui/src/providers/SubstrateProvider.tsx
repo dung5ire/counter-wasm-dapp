@@ -46,8 +46,7 @@ const SubstrateProvider = ({ children }: SubstrateProviderProps) => {
 
   useEffect(() => {
     getExtension();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getExtension]);
 
   const initialContextValue: SubstrateContextType = {
     accounts,
