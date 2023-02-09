@@ -7,7 +7,7 @@ import getAddress from '../../utils/getAddress';
 interface AccountsModalProps {
   open: boolean
   accounts: InjectedAccountWithMeta[]
-  onClose: () => void
+  onClose: (id: number) => void
 }
 
 const AccountsModal = ({ open, accounts, onClose }: AccountsModalProps) => {
@@ -17,8 +17,8 @@ const AccountsModal = ({ open, accounts, onClose }: AccountsModalProps) => {
         Choose Account
       </Typography>
       <List sx={{ pt: 0 }}>
-        {accounts.map((element) => (
-          <AccountWrapper key={element.address} onClick={onClose}>
+        {accounts.map((element, index) => (
+          <AccountWrapper key={element.address} onClick={() => onClose(index)}>
             <Typography variant='h6' fontWeight={600} color="#fff">
               {element.meta.name}:&nbsp;
             </Typography>
