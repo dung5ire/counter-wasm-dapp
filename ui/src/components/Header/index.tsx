@@ -24,6 +24,7 @@ const Header = () => {
   const onCloseAccountsModal = useCallback((id: number) => {
     if (!substrateInfo) return;
     setAccount(substrateInfo.accounts[id])
+    substrateInfo.setCurrentAccount(substrateInfo.accounts[id]);
     setOpenState(0);
   }, [substrateInfo]);
 
