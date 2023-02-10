@@ -52,6 +52,10 @@
     ```
     yarn install
     ```
++ Put contract address that your smart contract is deployed in `.env` file
+    ```
+    REACT_APP_CONTRACT_ADDRESS=xxx
+    ```
 
 + Start frontend
     ```
