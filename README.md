@@ -9,6 +9,17 @@
     ``` 
     cd counter-wasm-dapp
     ```
+# Prerequisites
+
+- Node >= 16.0 ([https://nodejs.org](https://nodejs.org))
+- yarn
+- Install Rust and Cargo: https://doc.rust-lang.org/cargo/getting-started/installation.html
+- Install Wasm: `rustup target add wasm32-unknown-unknown --toolchain nightly`
+
+- Install Ink CLI:`cargo install cargo-contract --force`
+
+
+
 # Ink! Smart Contract
 + Go to `contracts` folder:
     ```
