@@ -15,7 +15,7 @@
     cd contracts
     ```
 . We use `ink!` language to write smart contract [ink!](https://paritytech.github.io/ink/). 
-+ Write your [counter](https://github.com/5ire-tech/wasm-contract-example/tree/develop/incrementer) smart contract
++ Write your [counter](https://github.com/5ire-tech/counter-wasm-dapp/tree/master/contracts/counter) smart contract
 
     >Inititalize value 
     `constructor new(init_value:i32)` 
