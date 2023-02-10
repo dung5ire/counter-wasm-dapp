@@ -33,7 +33,15 @@
     ```
     ./scripts/build.sh
     ```
-
++ Deploy counter smart contract
+    - `cd contracts/scripts/deploy`
+    - In this project, copy the `.env.test` file to a file named `.env`, and then edit it to fill in the details. Enter your mnemonics phrase which will send the deployment transaction.
+    - `yarn install`
+    - Deploy smart contract:
+        ```
+        node deploy.js
+        ```
+        `Contract Address: 5FKt5cgVbvi9PPNL18dSsnuCCFdC5X1UmLwLcY7tFLUKtL3P`
 # Frontend
 
 + Go to `ui` folder: 
