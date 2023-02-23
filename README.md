@@ -11,13 +11,45 @@
     ```
 # Prerequisites
 
-- Node >= 16.0 ([https://nodejs.org](https://nodejs.org))
+- Node >= 16.0
 - yarn
-- Install Rust and Cargo: https://doc.rust-lang.org/cargo/getting-started/installation.html
-- Install Wasm: `rustup target add wasm32-unknown-unknown --toolchain nightly`
+- Install Rust Environment:
 
-- Install Ink CLI:`cargo install cargo-contract --force`
+    + Install Rust
+    ```bash
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    ```
+    + Configure 
+    ```bash
+        source ~/.cargo/env
+    ```
+    + Configure to the latest stable and WASM target
+    ```bash
+        rustup default stable
+        rustup update
+        rustup update nightly
+        rustup component add rust-src
+        rustup component add rust-src --toolchain nightly
+        rustup target add wasm32-unknown-unknown --toolchain nightly
+    ```
+    + Install WebAssembly Compiler
+    
+    `Debian/Ubuntu`
+    ```
+        apt-get update
+        apt-get -y install binaryen
+    ```
+    
+    `MacOs`
+     ```
+        brew install binaryen
+    ```
 
+
+- Install Ink CLI:
+```
+cargo install cargo-contract --force
+```
 
 
 # Ink! Smart Contract
