@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Typography } from '@mui/material';
-import { ContractPromise} from '@polkadot/api-contract';
+import { ContractPromise } from '@polkadot/api-contract';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import FlexBox from '../Flexbox';
@@ -26,7 +26,7 @@ interface CounterProps {
 }
 
 const Counter = ({ account }: CounterProps) => {
-  const [currentVal, setCurrentVal] = useState<any>(undefined);
+  const [currentVal, setCurrentVal] = useState<any>('');
   const [pendingState, setPendingState] = useState(-1);
 
   const getValue = useCallback(async (address: string) => {
@@ -49,7 +49,7 @@ const Counter = ({ account }: CounterProps) => {
         }
       );
 
-      console.log("Here:",result.isErr);
+      console.log("Here:", result.isErr);
 
       if (result.isOk) {
         console.log("Ok");
@@ -68,10 +68,10 @@ const Counter = ({ account }: CounterProps) => {
     let isApiSubscribed = true;
     if (account) {
       setPendingState(3);
-      getValue(account.address).then((res) => {
+      getValue(account.address).then((res: any) => {
         if (isApiSubscribed) {
           setPendingState(0);
-          setCurrentVal(res);
+          setCurrentVal(res?.Ok || '');
         }
       });
     }
@@ -96,12 +96,13 @@ const Counter = ({ account }: CounterProps) => {
         await contract
           .tx
           .inc({ storageDepositLimit, gasLimit })
-          .signAndSend(account.address, { signer: injector?.signer }, async ( result ) => {
+          .signAndSend(account.address, { signer: injector?.signer }, async (result) => {
             if (result.status.isFinalized) {
-              const res = await getValue(account.address);
+              const res: any = await getValue(account.address);
               setPendingState(0);
-              setCurrentVal(res);
-            }}
+              setCurrentVal(res?.Ok || '');
+            }
+          }
           );
       } catch (error: any) {
         setPendingState(0);
@@ -127,10 +128,11 @@ const Counter = ({ account }: CounterProps) => {
           .des({ storageDepositLimit, gasLimit })
           .signAndSend(account.address, { signer: injector?.signer }, async (result) => {
             if (result.status.isFinalized) {
-              const res = await getValue(account.address);
+              const res: any = await getValue(account.address);
               setPendingState(0);
-              setCurrentVal(res);
-            }}
+              setCurrentVal(res?.Ok || '');
+            }
+          }
           );
       } catch (error: any) {
         setPendingState(0);
@@ -154,7 +156,7 @@ const Counter = ({ account }: CounterProps) => {
         <StyledButton
           variant='contained'
           sx={{ marginRight: 4 }}
-          disabled={pendingState === 1 || pendingState === 2 }
+          disabled={pendingState === 1 || pendingState === 2}
           onClick={onDecrease}
         >
           -
@@ -162,7 +164,7 @@ const Counter = ({ account }: CounterProps) => {
         </StyledButton>
         <StyledButton
           variant='contained'
-          disabled={pendingState === 1 || pendingState === 2 }
+          disabled={pendingState === 1 || pendingState === 2}
           onClick={onIncrease}
         >
           +
