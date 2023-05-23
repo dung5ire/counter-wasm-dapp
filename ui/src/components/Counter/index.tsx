@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Typography } from '@mui/material';
-import { ContractPromise } from '@polkadot/api-contract';
+import { ContractPromise} from '@polkadot/api-contract';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import FlexBox from '../Flexbox';
@@ -9,9 +9,16 @@ import Loader from '../Loader';
 import { getApi } from '../../config/utils';
 import metadata from '../../metadata/metadata.json';
 import { CounterContainer, StyledButton } from './styles';
+import { BN, BN_ONE } from '@polkadot/util';
+import type { WeightV2 } from '@polkadot/types/interfaces';
 
-const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS as string;
-const gasLimit = 100000 * 1000000;
+const contractAddress = '5FT1aERN9MhV7iVxb81MGzCvxWjC2XzjZz4RTaucWquBwDky';
+
+
+// const MAX_CALL_WEIGHT = 3951114240;
+// const PROOFSIZE = 125952;
+const MAX_CALL_WEIGHT = new BN(5_000_000_000_000).isub(BN_ONE);
+const PROOFSIZE = new BN(1_000_000);
 const storageDepositLimit = null;
 
 interface CounterProps {
@@ -26,6 +33,13 @@ const Counter = ({ account }: CounterProps) => {
     let _currentValue;
     try {
       const api = await getApi();
+
+      const gasLimit = api.registry.createType('WeightV2', {
+        refTime: MAX_CALL_WEIGHT,
+        proofSize: PROOFSIZE,
+      }) as WeightV2;
+      //const gasLimit = api.registry.createType('WeightV2', { refTime: BigInt(100000 * 1000000), proofSize: BigInt(100000) }) as WeightV2;
+
       const contract = new ContractPromise(api, metadata, contractAddress);
       const { result, output } = await contract.query.get(
         address,
@@ -34,7 +48,11 @@ const Counter = ({ account }: CounterProps) => {
           storageDepositLimit,
         }
       );
+
+      console.log("Here:",result.isErr);
+
       if (result.isOk) {
+        console.log("Ok");
         _currentValue = output?.toHuman();
       } else {
         toast.error('Something weng wrong!');
@@ -67,6 +85,12 @@ const Counter = ({ account }: CounterProps) => {
       setPendingState(1);
       try {
         const api = await getApi();
+
+        const gasLimit = api.registry.createType('WeightV2', {
+          refTime: MAX_CALL_WEIGHT,
+          proofSize: PROOFSIZE,
+          value: 0
+        }) as WeightV2;
         const contract = new ContractPromise(api, metadata, contractAddress);
         const injector = await web3FromAddress(account.address);
         await contract
@@ -93,7 +117,11 @@ const Counter = ({ account }: CounterProps) => {
         const api = await getApi();
         const contract = new ContractPromise(api, metadata, contractAddress);
         const injector = await web3FromAddress(account.address);
-
+        const gasLimit = api.registry.createType('WeightV2', {
+          refTime: MAX_CALL_WEIGHT,
+          proofSize: PROOFSIZE,
+          value: 0
+        }) as WeightV2;
         await contract
           .tx
           .des({ storageDepositLimit, gasLimit })
