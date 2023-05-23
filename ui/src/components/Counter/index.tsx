@@ -15,9 +15,9 @@ import type { WeightV2 } from '@polkadot/types/interfaces';
 const contractAddress = '5FT1aERN9MhV7iVxb81MGzCvxWjC2XzjZz4RTaucWquBwDky';
 
 
-// const MAX_CALL_WEIGHT = 3951114240;
-// const PROOFSIZE = 125952;
-const MAX_CALL_WEIGHT = new BN(5_000_000_000_000).isub(BN_ONE);
+// const MAX_CALL_WEIGHT = new BN(3951114240);
+// const PROOFSIZE = new BN(125952);
+const MAX_CALL_WEIGHT = new BN(500_000_000_000).isub(BN_ONE);
 const PROOFSIZE = new BN(1_000_000);
 const storageDepositLimit = null;
 
