@@ -12,7 +12,7 @@ import { stringToHex, BN, BN_ONE } from '@polkadot/util';
 import type { WeightV2 } from '@polkadot/types/interfaces';
 import useSubstrateContext from '../../hooks/useSubstrateContext';
 
-const contractAddress = '5FT1aERN9MhV7iVxb81MGzCvxWjC2XzjZz4RTaucWquBwDky';
+const contractAddress = '5Gp8BNeqtbnawXrjPqqQmdKqn76hTLvaxvbboYJ1aj1gesT4';
 
 // const MAX_CALL_WEIGHT = new BN(3951114240);
 // const PROOFSIZE = new BN(125952);
@@ -34,6 +34,7 @@ const Counter = () => {
         refTime: MAX_CALL_WEIGHT,
         proofSize: PROOFSIZE,
       }) as WeightV2;
+      
       //const gasLimit = api.registry.createType('WeightV2', { refTime: BigInt(100000 * 1000000), proofSize: BigInt(100000) }) as WeightV2;
 
       const contract = new ContractPromise(api, metadata, contractAddress);
