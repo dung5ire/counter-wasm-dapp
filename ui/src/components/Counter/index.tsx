@@ -2,13 +2,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Typography } from '@mui/material';
 import { ContractPromise } from '@polkadot/api-contract';
-import { web3FromAddress } from '@polkadot/extension-dapp';
 import FlexBox from '../Flexbox';
 import Loader from '../Loader';
 import { getApi } from '../../config/utils';
 import metadata from '../../metadata/metadata.json';
 import { CounterContainer, StyledButton } from './styles';
-import { stringToHex, BN, BN_ONE } from '@polkadot/util';
+import { BN, BN_ONE } from '@polkadot/util';
 import type { WeightV2 } from '@polkadot/types/interfaces';
 import useSubstrateContext from '../../hooks/useSubstrateContext';
 
