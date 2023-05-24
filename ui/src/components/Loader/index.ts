@@ -1,6 +1,6 @@
 import { styled } from "@mui/material"
 
-const Loader = styled('div')<{color?: string}>`
+const Loader = styled('span')<{color?: string}>`
   width: 18px;
   height: 18px;
   margin-left: 4px;
