@@ -10,9 +10,9 @@ function App() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && typeof window.fire !== 'undefined') {
-      window.fire.on('accountChanged', handleAccountChanged);
+      window.fire.on('accountsChanged', handleAccountChanged);
       return () => {
-        window.fire.removeListener('accountChanged', handleAccountChanged);
+        window.fire.removeListener('accountsChanged', handleAccountChanged);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
