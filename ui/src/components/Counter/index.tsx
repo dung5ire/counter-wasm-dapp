@@ -1,52 +1,35 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Typography } from '@mui/material';
-import { ContractPromise } from '@polkadot/api-contract';
 import FlexBox from '../Flexbox';
 import Loader from '../Loader';
-import { getApi } from '../../config/utils';
-import metadata from '../../metadata/metadata.json';
 import { CounterContainer, StyledButton } from './styles';
-import { BN, BN_ONE } from '@polkadot/util';
-import type { WeightV2 } from '@polkadot/types/interfaces';
 import useSubstrateContext from '../../hooks/useSubstrateContext';
+import useCounterContract from '../../hooks/useCounterContract';
+import { STORAGE_DEPOSIT_LIMIT } from '../../constants';
 
-const contractAddress = '5Gp8BNeqtbnawXrjPqqQmdKqn76hTLvaxvbboYJ1aj1gesT4';
-
-// const MAX_CALL_WEIGHT = new BN(3951114240);
-// const PROOFSIZE = new BN(125952);
-const MAX_CALL_WEIGHT = new BN(500_000_000_000).isub(BN_ONE);
-const PROOFSIZE = new BN(1_000_000);
-const storageDepositLimit = null;
 
 const Counter = () => {
   const { address: account } = useSubstrateContext();
+  const counterContract = useCounterContract();
   const [currentVal, setCurrentVal] = useState<any>('');
   const [pendingState, setPendingState] = useState(-1);
 
   const getValue = useCallback(async (address: string) => {
     let _currentValue;
+
+    const { contract, gasLimit } = await counterContract;
+
     try {
-      const api = await getApi();
-
-      const gasLimit = api.registry.createType('WeightV2', {
-        refTime: MAX_CALL_WEIGHT,
-        proofSize: PROOFSIZE,
-      }) as WeightV2;
-      
-      //const gasLimit = api.registry.createType('WeightV2', { refTime: BigInt(100000 * 1000000), proofSize: BigInt(100000) }) as WeightV2;
-
-      const contract = new ContractPromise(api, metadata, contractAddress);
       const { result, output } = await contract.query.get(
         address,
         {
           gasLimit,
-          storageDepositLimit,
+          storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
         }
       );
 
       if (result.isOk) {
-        console.log("Ok");
         _currentValue = output?.toHuman();
       } else {
         toast.error('Something weng wrong!');
@@ -56,12 +39,15 @@ const Counter = () => {
     } finally {
       return _currentValue;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     let isApiSubscribed = true;
+
     if (account) {
       setPendingState(3);
+
       getValue(account).then((res: any) => {
         if (isApiSubscribed) {
           setPendingState(0);
@@ -69,6 +55,7 @@ const Counter = () => {
         }
       });
     }
+
     return () => {
       isApiSubscribed = false;
     };
@@ -77,27 +64,24 @@ const Counter = () => {
   const onIncrease = async () => {
     if (account) {
       setPendingState(1);
-      try {
-        const api = await getApi();
 
-        const gasLimit = api.registry.createType('WeightV2', {
-          refTime: MAX_CALL_WEIGHT,
-          proofSize: PROOFSIZE,
-          value: 0
-        }) as WeightV2;
-        const contract = new ContractPromise(api, metadata, contractAddress);
+      try {
+        const { contract, gasLimit } = await counterContract;
+
         await contract
           .tx
-          .inc({ storageDepositLimit, gasLimit })
+          .inc({
+            gasLimit,
+            storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
+          })
           .signAndSend(account, { signer: window.fire }, async (result) => {
             if (result.status.isFinalized) {
               const res: any = await getValue(account);
               setPendingState(0);
               setCurrentVal(res?.Ok || '');
+              toast.success('Successfully increased!');
             }
-          }
-          );
-
+          });
       } catch (error: any) {
         setPendingState(0);
         toast.error(error?.message || error);
@@ -108,24 +92,24 @@ const Counter = () => {
   const onDecrease = async () => {
     if (account) {
       setPendingState(2);
+
       try {
-        const api = await getApi();
-        const contract = new ContractPromise(api, metadata, contractAddress);
-        const gasLimit = api.registry.createType('WeightV2', {
-          refTime: MAX_CALL_WEIGHT,
-          proofSize: PROOFSIZE,
-        }) as WeightV2;
+        const { contract, gasLimit } = await counterContract;
+
         await contract
           .tx
-          .des({ storageDepositLimit, gasLimit })
+          .des({
+            gasLimit,
+            storageDepositLimit: STORAGE_DEPOSIT_LIMIT,
+          })
           .signAndSend(account, { signer: window.fire }, async (result) => {
             if (result.status.isFinalized) {
               const res: any = await getValue(account);
               setPendingState(0);
               setCurrentVal(res?.Ok || '');
+              toast.success('Successfully decreased!');
             }
-          }
-          );
+          });
       } catch (error: any) {
         setPendingState(0);
         toast.error(error?.message || error);
