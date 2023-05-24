@@ -87,31 +87,18 @@ const Counter = () => {
           value: 0
         }) as WeightV2;
         const contract = new ContractPromise(api, metadata, contractAddress);
-
-        const signPayload = window?.fire?.signPayload;
-        console.log(signPayload)
-
-        if (!!signPayload) {
-          console.log(222)
-          const { signature } = await signPayload({
-            address: account,
-            data: stringToHex('message to sign'),
-            type: 'bytes'
-          });
-
-          await contract
-            .tx
-            .inc({ storageDepositLimit, gasLimit })
-            .signAndSend(account, { signer: signature }, async (result) => {
-              console.log(result)
-              if (result.status.isFinalized) {
-                const res: any = await getValue(account);
-                setPendingState(0);
-                setCurrentVal(res?.Ok || '');
-              }
+        await contract
+          .tx
+          .inc({ storageDepositLimit, gasLimit })
+          .signAndSend(account, { signer: window.fire }, async (result) => {
+            if (result.status.isFinalized) {
+              const res: any = await getValue(account);
+              setPendingState(0);
+              setCurrentVal(res?.Ok || '');
             }
-            );
-        }
+          }
+          );
+
       } catch (error: any) {
         setPendingState(0);
         toast.error(error?.message || error);
@@ -125,16 +112,14 @@ const Counter = () => {
       try {
         const api = await getApi();
         const contract = new ContractPromise(api, metadata, contractAddress);
-        const injector = await web3FromAddress(account);
         const gasLimit = api.registry.createType('WeightV2', {
           refTime: MAX_CALL_WEIGHT,
           proofSize: PROOFSIZE,
-          value: 0
         }) as WeightV2;
         await contract
           .tx
           .des({ storageDepositLimit, gasLimit })
-          .signAndSend(account, { signer: injector?.signer }, async (result) => {
+          .signAndSend(account, { signer: window.fire }, async (result) => {
             if (result.status.isFinalized) {
               const res: any = await getValue(account);
               setPendingState(0);
