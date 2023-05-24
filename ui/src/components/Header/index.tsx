@@ -1,32 +1,38 @@
-import { useState, useCallback } from 'react';
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
-import { Button, Typography} from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import useSubstrateContext from '../../hooks/useSubstrateContext';
-import WalletsModal from '../WalletsModal';
-import AccountsModal from '../AccountsModal';
 import { HeaderContainer } from './styles';
 import getAddress from '../../utils/getAddress';
+import type { ConnectRes } from '../../types/SubstrateContext';
 
 const Header = () => {
-  const substrateInfo = useSubstrateContext();
-
-  const [openState, setOpenState] = useState(0);
-  const [account, setAccount] = useState<InjectedAccountWithMeta | null>(null);
+  const {
+    address,
+    setLoading,
+    setErrMsg,
+    setIsConnected,
+    setAddress,
+  } = useSubstrateContext();
 
   const handleConnect = () => {
-    setOpenState(1);
+    if (typeof window.fire !== 'undefined') {
+      setLoading(true);
+
+      window.fire.request({
+        method: 'connect'
+      })
+        .then((res: ConnectRes) => {
+          setAddress(res.nativeAddress);
+          setIsConnected(true);
+        })
+        .catch((error: any) => {
+          if (error instanceof Error) setErrMsg('Something went wrong!')
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setErrMsg(
+        'Please install 5ire wallet. You can download it here. https://chrome.google.com/webstore/detail/5irechain-wallet/keenhcnmdmjjhincpilijphpiohdppno.');
+    }
   };
-
-  const onCloseWalletsModal = useCallback(() => {
-    setOpenState(2);
-  }, []);
-
-  const onCloseAccountsModal = useCallback((id: number) => {
-    if (!substrateInfo) return;
-    setAccount(substrateInfo.accounts[id])
-    substrateInfo.setCurrentAccount(substrateInfo.accounts[id]);
-    setOpenState(0);
-  }, [substrateInfo]);
 
   return (
     <header>
@@ -34,7 +40,6 @@ const Header = () => {
         <Typography variant="h5" fontWeight={700}>Counter Dapp</Typography>
         <Button
           variant="contained"
-          disabled={account?.address ? true : false}
           sx={{
             ':disabled': {
               color: '#fff',
@@ -44,15 +49,9 @@ const Header = () => {
           }}
           onClick={handleConnect}
         >
-          {account?.address ? getAddress(account?.address) : "Connect Wallet"}
+          {address ? getAddress(address) : "Connect Wallet"}
         </Button>
       </HeaderContainer>
-      <WalletsModal open={openState === 1} onClose={onCloseWalletsModal} />
-      <AccountsModal
-        open={openState === 2}
-        accounts={substrateInfo?.accounts || []}
-        onClose={onCloseAccountsModal}
-      />
     </header>
   )
 };

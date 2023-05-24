@@ -8,7 +8,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 
 
 //Staging mode
-const WS_PROVIDER = "wss://wss-testnet.5ire.network/";
+const WS_PROVIDER = "wss://uat-wss-nodes.5ire.network";
 let api: ApiPromise;
 
 export async function getApi() {

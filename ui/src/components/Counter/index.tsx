@@ -3,17 +3,16 @@ import { toast } from 'react-toastify';
 import { Typography } from '@mui/material';
 import { ContractPromise } from '@polkadot/api-contract';
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import FlexBox from '../Flexbox';
 import Loader from '../Loader';
 import { getApi } from '../../config/utils';
 import metadata from '../../metadata/metadata.json';
 import { CounterContainer, StyledButton } from './styles';
-import { BN, BN_ONE } from '@polkadot/util';
+import { stringToHex, BN, BN_ONE } from '@polkadot/util';
 import type { WeightV2 } from '@polkadot/types/interfaces';
+import useSubstrateContext from '../../hooks/useSubstrateContext';
 
 const contractAddress = '5FT1aERN9MhV7iVxb81MGzCvxWjC2XzjZz4RTaucWquBwDky';
-
 
 // const MAX_CALL_WEIGHT = new BN(3951114240);
 // const PROOFSIZE = new BN(125952);
@@ -21,11 +20,8 @@ const MAX_CALL_WEIGHT = new BN(500_000_000_000).isub(BN_ONE);
 const PROOFSIZE = new BN(1_000_000);
 const storageDepositLimit = null;
 
-interface CounterProps {
-  account?: InjectedAccountWithMeta | null
-}
-
-const Counter = ({ account }: CounterProps) => {
+const Counter = () => {
+  const { address: account } = useSubstrateContext();
   const [currentVal, setCurrentVal] = useState<any>('');
   const [pendingState, setPendingState] = useState(-1);
 
@@ -49,8 +45,6 @@ const Counter = ({ account }: CounterProps) => {
         }
       );
 
-      console.log("Here:", result.isErr);
-
       if (result.isOk) {
         console.log("Ok");
         _currentValue = output?.toHuman();
@@ -68,7 +62,7 @@ const Counter = ({ account }: CounterProps) => {
     let isApiSubscribed = true;
     if (account) {
       setPendingState(3);
-      getValue(account.address).then((res: any) => {
+      getValue(account).then((res: any) => {
         if (isApiSubscribed) {
           setPendingState(0);
           setCurrentVal(res?.Ok || '');
@@ -92,18 +86,31 @@ const Counter = ({ account }: CounterProps) => {
           value: 0
         }) as WeightV2;
         const contract = new ContractPromise(api, metadata, contractAddress);
-        const injector = await web3FromAddress(account.address);
-        await contract
-          .tx
-          .inc({ storageDepositLimit, gasLimit })
-          .signAndSend(account.address, { signer: injector?.signer }, async (result) => {
-            if (result.status.isFinalized) {
-              const res: any = await getValue(account.address);
-              setPendingState(0);
-              setCurrentVal(res?.Ok || '');
+
+        const signPayload = window?.fire?.signPayload;
+        console.log(signPayload)
+
+        if (!!signPayload) {
+          console.log(222)
+          const { signature } = await signPayload({
+            address: account,
+            data: stringToHex('message to sign'),
+            type: 'bytes'
+          });
+
+          await contract
+            .tx
+            .inc({ storageDepositLimit, gasLimit })
+            .signAndSend(account, { signer: signature }, async (result) => {
+              console.log(result)
+              if (result.status.isFinalized) {
+                const res: any = await getValue(account);
+                setPendingState(0);
+                setCurrentVal(res?.Ok || '');
+              }
             }
-          }
-          );
+            );
+        }
       } catch (error: any) {
         setPendingState(0);
         toast.error(error?.message || error);
@@ -117,7 +124,7 @@ const Counter = ({ account }: CounterProps) => {
       try {
         const api = await getApi();
         const contract = new ContractPromise(api, metadata, contractAddress);
-        const injector = await web3FromAddress(account.address);
+        const injector = await web3FromAddress(account);
         const gasLimit = api.registry.createType('WeightV2', {
           refTime: MAX_CALL_WEIGHT,
           proofSize: PROOFSIZE,
@@ -126,9 +133,9 @@ const Counter = ({ account }: CounterProps) => {
         await contract
           .tx
           .des({ storageDepositLimit, gasLimit })
-          .signAndSend(account.address, { signer: injector?.signer }, async (result) => {
+          .signAndSend(account, { signer: injector?.signer }, async (result) => {
             if (result.status.isFinalized) {
-              const res: any = await getValue(account.address);
+              const res: any = await getValue(account);
               setPendingState(0);
               setCurrentVal(res?.Ok || '');
             }
