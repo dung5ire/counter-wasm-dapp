@@ -6,6 +6,7 @@ import type { ConnectRes } from '../../types/SubstrateContext';
 
 const Header = () => {
   const {
+    isConnected,
     address,
     setLoading,
     setErrMsg,
@@ -34,6 +35,27 @@ const Header = () => {
     }
   };
 
+  const handleDisconnect = () => {
+    if (typeof window.fire !== 'undefined') {
+      setLoading(true);
+
+      window.fire.request({
+        method: 'disconnect'
+      })
+        .then(() => {
+          setAddress('');
+          setIsConnected(false);
+        })
+        .catch((error: any) => {
+          if (error instanceof Error) setErrMsg('Something went wrong!')
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setErrMsg(
+        'Please install 5ire wallet. You can download it here. https://chrome.google.com/webstore/detail/5irechain-wallet/keenhcnmdmjjhincpilijphpiohdppno.');
+    }
+  };
+
   return (
     <header>
       <HeaderContainer>
@@ -47,7 +69,7 @@ const Header = () => {
               cursor: 'not-allowed',
             }
           }}
-          onClick={handleConnect}
+          onClick={isConnected ? handleDisconnect : handleConnect}
         >
           {address ? getAddress(address) : "Connect Wallet"}
         </Button>

@@ -54,6 +54,8 @@ const Counter = () => {
           setCurrentVal(res?.Ok || '');
         }
       });
+    } else {
+      setPendingState(-1);
     }
 
     return () => {
