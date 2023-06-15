@@ -1,23 +1,30 @@
 import { ContractPromise } from '@polkadot/api-contract';
+import { BN, BN_ONE } from '@polkadot/util';
+import type { WeightV2 } from '@polkadot/types/interfaces';
 
+import config from '../config';
 import { getApi } from '../config/utils';
 import metadata from '../metadata/metadata.json';
-import { BN, BN_ONE } from '@polkadot/util';
-const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS as string;
+import { MAX_CALL_WEIGHT, PROOF_SIZE } from '../constants';
 
-const useCounterContract = async () => {
+const useCounterContract: () => Promise<{
+  contract: ContractPromise,
+  gasLimit: WeightV2,
+}> = async () => {
+  const { contractAddress } = config;
+
   const api = await getApi();
-  const MAX_CALL_WEIGHT = new BN(5_000_000_000_000).isub(BN_ONE);
-  const PROOFSIZE = new BN(1_000_000);
+  const maxCallWeight = new BN(MAX_CALL_WEIGHT).isub(BN_ONE);
+  const proofSize = new BN(PROOF_SIZE);
 
   const gasLimit = api.registry.createType('WeightV2', {
-    refTime: MAX_CALL_WEIGHT,
-    proofSize: PROOFSIZE,
-  });
-
+    refTime: maxCallWeight,
+    proofSize,
+  }) as WeightV2;
 
   const contract = new ContractPromise(api, metadata, contractAddress);
-  return { contract, gasLimit }
+
+  return { contract, gasLimit };
 };
 
 export default useCounterContract;
