@@ -21,7 +21,7 @@ const main = async() => {
 
     console.log("Connect with 5ire Provider");
 
-    const keyring = new Keyring({ type: "ed25519" });
+    const keyring = new Keyring({ type: "sr25519" });
     const userKeyring = keyring.addFromMnemonic(process.env.MNEMONIC_PHRASE);
     const code = new CodePromise(api, metadata, wasm);
 
