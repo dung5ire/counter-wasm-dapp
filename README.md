@@ -97,7 +97,7 @@ cargo install cargo-contract --force
     ```
 + Put contract address that your smart contract is deployed in `.env` file
     ```
-    REACT_APP_WSS_PROVIDER=wss://wss.ga.5ire.network/
+    REACT_APP_WSS_PROVIDER=wss://rpc.testnet.5ire.network/
     REACT_APP_CONTRACT_ADDRESS=xxx
     ```
 
