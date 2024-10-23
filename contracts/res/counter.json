@@ -1,12 +1,12 @@
 {
   "source": {
-    "hash": "0x77aa69db1d7e36fed381163213d5afe3a1b792a2611456bcb34172bd3ad207b6",
-    "language": "ink! 4.2.0",
-    "compiler": "rustc 1.69.0-nightly",
+    "hash": "0x19c8a0713633c453f3ba1e71570d11084e83ccdbbe1d423d9b694ebb0492dc34",
+    "language": "ink! 4.3.0",
+    "compiler": "rustc 1.80.1",
     "build_info": {
-      "build_mode": "Release",
-      "cargo_contract_version": "2.0.2",
-      "rust_toolchain": "nightly-aarch64-apple-darwin",
+      "build_mode": "Debug",
+      "cargo_contract_version": "4.1.1",
+      "rust_toolchain": "stable-aarch64-apple-darwin",
       "wasm_opt_settings": {
         "keep_debug_symbols": false,
         "optimization_passes": "Z"
@@ -15,11 +15,12 @@
   },
   "contract": {
     "name": "counter",
-    "version": "0.1.0",
+    "version": "4.2.0",
     "authors": [
-      "[your_name] <[your_email]>"
+      "Parity Technologies <admin@parity.io>"
     ]
   },
+  "image": null,
   "spec": {
     "constructors": [
       {

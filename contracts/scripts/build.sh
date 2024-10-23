@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e
 cd "`dirname $0`"/../counter
-cargo +nightly-2023-02-07 contract build
+cargo contract build
 cd ..
 
 cp counter/target/ink/*.wasm ./res/
-cp counter/target/ink/metadata.json ../ui/src/metadata/
+cp counter/target/ink/counter.json ./res/
+cp counter/target/ink/counter.json ../ui/src/metadata/

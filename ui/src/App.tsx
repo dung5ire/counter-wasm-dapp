@@ -32,7 +32,7 @@ function App() {
   }, [isFire]);
 
   const handleAccountChanged = useCallback((res: ConnectRes) => {
-    setAddress(res.nativeAddress);
+    setAddress(res.evmAddress);
     setIsConnected(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

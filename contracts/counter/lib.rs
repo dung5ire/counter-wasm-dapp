@@ -1,4 +1,4 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 
 
@@ -22,12 +22,12 @@ mod incrementer {
 
         #[ink(message)]
         pub fn inc(&mut self) {
-            self.value += 1;
+            self.value = self.value.saturating_add(1);
         }
 
         #[ink(message)]
         pub fn des(&mut self) {
-            self.value -= 1;
+            self.value = self.value.saturating_sub(1);
         }
 
         #[ink(message)]

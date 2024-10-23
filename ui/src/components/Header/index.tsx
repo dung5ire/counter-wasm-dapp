@@ -22,7 +22,7 @@ const Header = () => {
         method: 'connect'
       })
         .then((res: ConnectRes) => {
-          setAddress(res.nativeAddress);
+          setAddress(res.evmAddress);
           setIsConnected(true);
         })
         .catch((error: any) => {

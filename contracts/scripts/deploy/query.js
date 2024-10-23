@@ -23,8 +23,6 @@ const main = async () => {
 
   const keyring = new Keyring({ type: "ethereum" });
   const userKeyring = keyring.addFromMnemonic(process.env.PRIVATE_KEY);
-  const code = new CodePromise(api, metadata, wasm);
-
   // maximum gas to be consumed for the instantiation. if limit is too small the instantiation will fail.
 
   // a limit to how much Balance to be used to pay for the storage created by the instantiation
@@ -39,39 +37,32 @@ const main = async () => {
     storageDepositLimit,
   };
 
+  await queryTransaction(userKeyring, api, metadata, "0xF26A215A059e3aBB80a53A90E13429DA46090D9C", defaultTxOptions);
 
-  const initValue = 100;
-
-  // Initilize contract 
-  const tx = code.tx.new(defaultTxOptions, initValue)
-
-  // Sign transaction to deploy contract
-
-  let contractAddress; // variable for storing the address of the deployed contract 
-
-  contractAddress = await (new Promise(async (resolve, reject) => {
-    try {
-      await tx.signAndSend(userKeyring, ({ contract, status }) => {
-
-
-        if (status.isFinalized) {
-          // return contract address
-
-          address = contract.address.toString();
-
-          resolve(address);
-
-
-        }
-      });
-    } catch (error) {
-      reject(error)
-    }
-
-  }));
-  console.log("Contract Address:", address);
 
 }
+
+const queryTransaction = async (
+  alith,
+  api,
+  contractFile,
+  contractAddress,
+  options,
+) => {
+  console.log("Begin querying smart contract");
+
+  //Define deployed contract with metadata + contract address
+  const contract = new ContractPromise(api, contractFile, contractAddress);
+
+  // Query value from contract
+  const { result, output } = await contract.query.get(alith.publicKey, options);
+
+
+  let value = output?.toHuman();
+  console.log(value); 
+
+  return value;
+};
 
 
 
@@ -80,3 +71,4 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+

@@ -4,7 +4,7 @@ import type { WeightV2 } from '@polkadot/types/interfaces';
 
 import config from '../config';
 import { getApi } from '../config/utils';
-import metadata from '../metadata/metadata.json';
+import metadata from '../metadata/counter.json';
 import { MAX_CALL_WEIGHT, PROOF_SIZE } from '../constants';
 
 const useCounterContract: () => Promise<{
